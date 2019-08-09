@@ -47,10 +47,10 @@ describe('ReportOpen', function() {
         socksVersion: 5,
         noProxy:[".lan", "*.lan", "qa.lan", "*.qa.lan"]
       }))
-      // .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+      .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
     console.log("After build")
-    await driver.get(`${baseURL}/AgentWeb/`)    
+    await driver.get(`${baseURL}/`)    
     await driver.findElement(By.id("username")).click()
     await driver.findElement(By.id("username")).sendKeys(username)
     await driver.findElement(By.id("password")).click()
@@ -67,7 +67,7 @@ describe('ReportOpen', function() {
   })
 
   async function saveReport(reportID){
-    await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
+    await driver.get(`${baseURL}/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
     await waitForElement(driver, By.id(`datagrid_AC-${reportID}`))
     const image = await driver.takeScreenshot()
