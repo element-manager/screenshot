@@ -37,10 +37,25 @@ describe('ReportOpen', function() {
           loggingPrefs: prefs
         })      
       .forBrowser('chrome')
+      .setProxy(proxy.manual({
+        httpProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        sslProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        ftpProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        socksProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        socksVersion: 5,
+        noProxy=[".lan"]
+      }))
       .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
     console.log("After build")
     await driver.get(`${baseURL}/AgentWeb/`)
+    await driver.takeScreenshot().then(
+      function(image, err) {
+          fs.writeFile(`login.png`, image, 'base64', function(err) {
+              console.log(err);
+          });
+      }
+    );
     await driver.findElement(By.id("username")).click()
     await driver.findElement(By.id("username")).sendKeys("admin")
     await driver.findElement(By.id("loginbutton")).click()
