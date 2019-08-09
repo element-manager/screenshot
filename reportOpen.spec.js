@@ -35,20 +35,16 @@ describe('ReportOpen', function() {
         {
           acceptInsecureCerts: true,
           loggingPrefs: prefs
-        })
-      .setProxy(proxy.manual({
-        httpProxy: 'www-proxy-hqdc.us.oracle.com:80',
-        sslProxy: 'www-proxy-hqdc.us.oracle.com:80',
-        ftpProxy: 'www-proxy-hqdc.us.oracle.com:80',
-        socksProxy: 'www-proxy-hqdc.us.oracle.com:80',
-        socksVersion: 5
-      }))
+        })      
       .forBrowser('chrome')
       .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
     console.log("After build")
     await driver.get(`${baseURL}/AgentWeb/`)
-    await driver.manage().addCookie({name: 'USERSESSION', value: token})
+    await driver.findElement(By.id("username")).click()
+    await driver.findElement(By.id("username")).sendKeys("admin")
+    await driver.findElement(By.id("loginbutton")).click()
+    console.log("Cookie Set")
     await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
     await waitForElement(driver, By.id(`tabHeader-AC-${reportID}`))
