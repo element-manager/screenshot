@@ -27,8 +27,8 @@ describe('ReportOpen', function() {
   it('ReportOpen', async function() {
     console.log("Before build")
     var prefs = new logging.Preferences();
-    prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
-    prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
+      prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
+      prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
     driver = await new Builder()
       .withCapabilities(
         {
