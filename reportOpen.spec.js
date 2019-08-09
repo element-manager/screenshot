@@ -24,6 +24,7 @@ describe('ReportOpen', function() {
     await driver.quit();
   })
   it('ReportOpen', async function() {
+    console.log("Before build")
     driver = await new Builder()
       .withCapabilities({acceptInsecureCerts: true})
       .setProxy(proxy.manual({
@@ -36,6 +37,7 @@ describe('ReportOpen', function() {
       .forBrowser('firefox')
       .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
       .build()
+    console.log("After build")
     await driver.get(`${baseURL}/AgentWeb/`)
     await driver.manage().addCookie({name: 'USERSESSION', value: token})
     await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
