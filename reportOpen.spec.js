@@ -35,6 +35,7 @@ describe('ReportOpen', function() {
     await driver.quit();
   })
   it('ReportOpen', async function() {
+    await driver.get(`https://www.google.com`)
     await driver.get(`${baseURL}/AgentWeb/`)
     await driver.manage().addCookie({name: 'USERSESSION', value: token})
     await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
