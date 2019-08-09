@@ -19,7 +19,10 @@ describe('ReportOpen', function() {
   beforeEach(async function() {
     driver = await new Builder()
       .withCapabilities({acceptInsecureCerts: true})
-      .setProxy(proxy.manual({http: 'www-proxy-hqdc.us.oracle.com:80'}))
+      .setProxy(proxy.manual({
+        http: 'www-proxy-hqdc.us.oracle.com:80',
+        https: 'www-proxy-hqdc.us.oracle.com:80'
+      }))
       .forBrowser('firefox')
       .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
       .build()
