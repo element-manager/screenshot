@@ -56,7 +56,7 @@ describe('ReportOpen', function() {
     await driver.findElement(By.id("password")).click()
     await driver.findElement(By.id("password")).sendKeys(password)
     await driver.findElement(By.id("loginbutton")).click()
-    const reports = fs.readFileSync('reportId').toString().split('\n')
+    const reports = fs.readFileSync('reportId').toString().trim().split('\n')
     console.log(reports);
     for(var rId of reports){
       console.log(`Saving ${rId}`);
