@@ -20,8 +20,11 @@ describe('ReportOpen', function() {
     driver = await new Builder()
       .withCapabilities({acceptInsecureCerts: true})
       .setProxy(proxy.manual({
-        http: 'www-proxy-hqdc.us.oracle.com:80',
-        https: 'www-proxy-hqdc.us.oracle.com:80'
+        httpProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        sslProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        ftpProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        socksProxy: 'www-proxy-hqdc.us.oracle.com:80',
+        socksVersion: 5
       }))
       .forBrowser('firefox')
       .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
