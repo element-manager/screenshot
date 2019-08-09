@@ -43,7 +43,7 @@ describe('ReportOpen', function() {
         ftpProxy: 'www-proxy-hqdc.us.oracle.com:80',
         socksProxy: 'www-proxy-hqdc.us.oracle.com:80',
         socksVersion: 5,
-        noProxy:[".lan"]
+        noProxy:[".lan", "*.lan", "qa.lan", "*.qa.lan"]
       }))
       .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
