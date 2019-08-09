@@ -36,19 +36,7 @@ describe('ReportOpen', function() {
   })
   it('ReportOpen', async function() {
     await driver.get(`https://www.google.com`)
-    await driver.get(`${baseURL}/AgentWeb/`)
-    await driver.manage().addCookie({name: 'USERSESSION', value: token})
-    await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
-    await driver.executeScript("window.scrollTo(0,0)")
-    await waitForElement(driver, By.id(`tabHeader-AC-${reportID}`))
-    await sleep(5000)
-    await driver.takeScreenshot().then(
-      function(image, err) {
-          fs.writeFile(`${reportID}.png`, image, 'base64', function(err) {
-              console.log(err);
-          });
-      }
-    );
+    
   })
 
   function sleep(ms){
