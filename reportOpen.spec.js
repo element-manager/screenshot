@@ -13,7 +13,7 @@ const screen = {
 };
 
 describe('ReportOpen', function() {
-  this.timeout(30000)
+  this.timeout(150000)
   let driver
   let vars
   beforeEach(async function() {
