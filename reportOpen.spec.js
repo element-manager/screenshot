@@ -8,6 +8,8 @@ const fs = require('fs');
 const baseURL = fs.readFileSync('site').toString()
 const token = fs.readFileSync('token').toString()
 const reportID = fs.readFileSync('reportId').toString()
+const username = fs.readFileSync('username').toString().trim()
+const password = fs.readFileSync('password').toString().trim()
 
 const screen = {
   width: 1440,
@@ -15,7 +17,7 @@ const screen = {
 };
 
 describe('ReportOpen', function() {
-  this.timeout(150000)
+  this.timeout(15000000)
   let driver
   let vars
   beforeEach(async function() {
@@ -27,14 +29,14 @@ describe('ReportOpen', function() {
   })
   it('ReportOpen', async function() {
     console.log("Before build")
-    var prefs = new logging.Preferences();
-    prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
-    prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
+    // var prefs = new logging.Preferences();
+    // prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
+    // prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
     driver = await new Builder()
       .withCapabilities(
         {
           acceptInsecureCerts: true,
-          loggingPrefs: prefs
+          // loggingPrefs: prefs
         })      
       .forBrowser('chrome')
       .setProxy(proxy.manual({
@@ -45,33 +47,34 @@ describe('ReportOpen', function() {
         socksVersion: 5,
         noProxy:[".lan", "*.lan", "qa.lan", "*.qa.lan"]
       }))
-      .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+      // .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
     console.log("After build")
-    await driver.get(`${baseURL}/AgentWeb/`)
-    await driver.takeScreenshot().then(
-      function(image, err) {
-          fs.writeFile(`login.png`, image, 'base64', function(err) {
-              console.log(err);
-          });
-      }
-    );
+    await driver.get(`${baseURL}/AgentWeb/`)    
     await driver.findElement(By.id("username")).click()
-    await driver.findElement(By.id("username")).sendKeys("admin")
+    await driver.findElement(By.id("username")).sendKeys(username)
+    await driver.findElement(By.id("password")).click()
+    await driver.findElement(By.id("password")).sendKeys(password)
     await driver.findElement(By.id("loginbutton")).click()
-    console.log("Cookie Set")
+    const reports = fs.readFileSync('reportId').toString().split('\n')
+    console.log(reports);
+    for(var rId of reports){
+      console.log(`Saving ${rId}`);
+      await saveReport(rId)
+    }
+    // reports.forEach(async (rId) => {  });    
+    console.log("All reports fetched");
+  })
+
+  async function saveReport(reportID){
     await driver.get(`${baseURL}/AgentWeb/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
-    await waitForElement(driver, By.id(`tabHeader-AC-${reportID}`))
-    await sleep(5000)
-    await driver.takeScreenshot().then(
-      function(image, err) {
-          fs.writeFile(`${reportID}.png`, image, 'base64', function(err) {
-              console.log(err);
-          });
-      }
-    );
-  })
+    await waitForElement(driver, By.id(`datagrid_AC-${reportID}`))
+    const image = await driver.takeScreenshot()
+    fs.writeFileSync(`${reportID}.png`, image, 'base64')
+    console.log(`Saved ${reportID}.png`)
+    await driver.navigate().refresh();
+  }
 
   function sleep(ms){
     return new Promise(resolve=>{
@@ -89,6 +92,6 @@ describe('ReportOpen', function() {
         el = null
       }
       return false
-    }, 30000)
+    }, 100000)
   }
 })
