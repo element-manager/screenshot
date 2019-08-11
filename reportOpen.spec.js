@@ -28,7 +28,7 @@ describe('ReportOpen', function() {
     await driver.quit();
   })
   it('ReportOpen', async function() {
-    console.log("Before build")
+    console.log("Building Driver")
     // var prefs = new logging.Preferences();
     // prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
     // prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
@@ -49,13 +49,14 @@ describe('ReportOpen', function() {
       }))
       .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
-    console.log("After build")
+    console.log("Driver built")
     await driver.get(`${baseURL}/`)    
     await driver.findElement(By.id("username")).click()
     await driver.findElement(By.id("username")).sendKeys(username)
     await driver.findElement(By.id("password")).click()
     await driver.findElement(By.id("password")).sendKeys(password)
     await driver.findElement(By.id("loginbutton")).click()
+    console.log("Logged In")
     const reports = fs.readFileSync('reportId').toString().trim().split('\n')
     console.log(reports);
     for(var rId of reports){
@@ -69,11 +70,16 @@ describe('ReportOpen', function() {
   async function saveReport(reportID){
     await driver.get(`${baseURL}/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
+    await screenshot(`${reportID}-load`);
     await waitForElement(driver, By.id(`datagrid_AC-${reportID}`))
-    const image = await driver.takeScreenshot()
-    fs.writeFileSync(`${reportID}.png`, image, 'base64')
-    console.log(`Saved ${reportID}.png`)
+    await screenshot(reportID);
     await driver.navigate().refresh();
+  }
+
+  async function screenshot(name){
+    const image = await driver.takeScreenshot()
+    fs.writeFileSync(`${name}.png`, image, 'base64')
+    console.log(`Saved ${name}.png`)
   }
 
   function sleep(ms){
