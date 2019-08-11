@@ -70,7 +70,7 @@ describe('ReportOpen', function() {
   async function saveReport(reportID){
     await driver.get(`${baseURL}/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
-    await screenshot(`${reportID}-load`);
+    // await screenshot(`${reportID}-load`);
     await waitForElement(driver, By.id(`datagrid_AC-${reportID}`))
     await screenshot(reportID);
     await driver.navigate().refresh();
