@@ -16,18 +16,18 @@ const screen = {
   height: 1080
 };
 
-describe('ReportOpen', function() {
-  this.timeout(15000000)
+describe('ReportOpen', function () {
+  this.timeout(1200000)
   let driver
   let vars
-  beforeEach(async function() {
-    
+  beforeEach(async function () {
+
     vars = {}
   })
-  afterEach(async function() {
+  afterEach(async function () {
     await driver.quit();
   })
-  it('ReportOpen', async function() {
+  it('ReportOpen', async function () {
     console.log("Building Driver")
     // var prefs = new logging.Preferences();
     // prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
@@ -37,7 +37,7 @@ describe('ReportOpen', function() {
         {
           acceptInsecureCerts: true,
           // loggingPrefs: prefs
-        })      
+        })
       .forBrowser('chrome')
       .setProxy(proxy.manual({
         httpProxy: 'www-proxy-hqdc.us.oracle.com:80',
@@ -45,12 +45,12 @@ describe('ReportOpen', function() {
         ftpProxy: 'www-proxy-hqdc.us.oracle.com:80',
         socksProxy: 'www-proxy-hqdc.us.oracle.com:80',
         socksVersion: 5,
-        noProxy:[".lan", "*.lan", "qa.lan", "*.qa.lan"]
+        noProxy: [".lan", "*.lan", "qa.lan", "*.qa.lan"]
       }))
       .setChromeOptions(new chrome.Options().headless().windowSize(screen))
       .build()
     console.log("Driver built")
-    await driver.get(`${baseURL}/`)    
+    await driver.get(`${baseURL}/`)
     await driver.findElement(By.id("username")).click()
     await driver.findElement(By.id("username")).sendKeys(username)
     await driver.findElement(By.id("password")).click()
@@ -59,45 +59,48 @@ describe('ReportOpen', function() {
     console.log("Logged In")
     const reports = fs.readFileSync('reportId').toString().trim().split('\n')
     console.log(reports);
-    for(var rId of reports){
+    for (var rId of reports) {
       console.log(`Saving ${rId}`);
       await saveReport(rId)
     }
-    // reports.forEach(async (rId) => {  });    
     console.log("All reports fetched");
   })
 
-  async function saveReport(reportID){
+  async function saveReport(reportID) {
     await driver.get(`${baseURL}/Bookmark/Report/${reportID}`)
     await driver.executeScript("window.scrollTo(0,0)")
-    // await screenshot(`${reportID}-load`);
-    await waitForElement(driver, By.id(`datagrid_AC-${reportID}`))
-    await screenshot(reportID);
+    let fileName = reportID;
+    try {
+      await waitForElement(By.id(`datagrid_AC-${reportID}`))
+    } catch {
+      fileName = `${reportID}-failure`;
+    }
+    await screenshot(fileName);
     await driver.navigate().refresh();
   }
 
-  async function screenshot(name){
+  async function screenshot(name) {
     const image = await driver.takeScreenshot()
     fs.writeFileSync(`${name}.png`, image, 'base64')
     console.log(`Saved ${name}.png`)
   }
 
-  function sleep(ms){
-    return new Promise(resolve=>{
-        setTimeout(resolve,ms)
+  function sleep(ms) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms)
     })
   }
 
-  async function waitForElement(dr, selector){
-    return await dr.wait(async function() {
-      let el
-      try{
-        el = await dr.findElement(selector)
-        return el.isDisplayed().then(v => v ? el : null)
+  async function waitForElement(selector) {
+    return await driver.wait(async function () {
+      let element
+      try {
+        element = await driver.findElement(selector)
+        return element.isDisplayed().then(v => v ? element : null)
       } catch {
-        el = null
+        element = null
       }
       return false
-    }, 100000)
+    }, 120000)
   }
 })
